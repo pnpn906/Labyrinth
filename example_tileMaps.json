@@ -1,0 +1,13 @@
+{
+  "TileMap": [
+    {"texture": "darkness.png", "x": 18, "y": 11},  # ?
+    {"texture": "darkness.png", "x": 18, "y": 11}],
+  "HardTileMap": {
+    "HardTiles": [
+      {"texture": "darkness.png", "x": 18, "y": 11},    # ?
+      {"texture": "darkness.png", "x": 18, "y": 11}],
+    "InteractiveTiles": [
+      {"texture": "darkness.png", "x": 18, "y": 11},    # ?
+      {"texture": "darkness.png", "x": 18, "y": 11}]
+  }
+}
