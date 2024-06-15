@@ -1,7 +1,7 @@
 import pygame
 from Config import Config
 from UiElement import UIElement
-from Button import Button
+from Button import Button, Text
 
 class Menu(UIElement):
     def __init__(self, title, width, height, background_color, x=0,y=0, orientation="vertical"):
@@ -46,7 +46,19 @@ class Menu(UIElement):
             el.blit()
 
     def update(self):
+        all_ui_elements = self.ui_elements.sprites()
+
+        for uiElement in all_ui_elements:
+            uiElement.update()
+
+    def CheckPressed(self, x, y):
         pass
+
+    def HandleEvent(self, event):
+        all_ui_elements = self.ui_elements.sprites()
+
+        for uiElement in all_ui_elements:
+            uiElement.HandleEvent(event)
 
     def AddUiElemnt(self, ui_element: UIElement):
         """
@@ -99,7 +111,24 @@ class Menu(UIElement):
 
         self.ui_elements.add(ui_element)
 
+
 if __name__ == "__main__":
+    curValue = 0
+    text = None
+
+    def ActionForBindIncrement():
+        global curValue
+
+        curValue +=1
+        text.UpdateText(str(curValue))
+
+
+    def ActionForBindDicrement():
+        global curValue
+
+        curValue -= 1
+        text.UpdateText(str(curValue))
+
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     Config.Initialize(screen)
@@ -109,18 +138,35 @@ if __name__ == "__main__":
     subMenu2 = Menu("Submenu2", 400, 150, (0,0,0))
     subMenu3 = Menu("Submenu3", 400, 150, (0,0,0))
 
+    text = Text(str(curValue), 20, (0, 0, 0))
+
     menu.AddUiElemnt(subMenu)
     btn1 = Button("+", 20, 20, 20, (243, 243, 243))
+    btn1.BindAction(ActionForBindIncrement)
     btn2 = Button("-", 20, 10, 10, (243, 243, 243))
-    btn3 = Button("-", 20, 40, 40, (243, 243, 243))
-    subMenu.AddUiElemnt(btn1)
-    subMenu.AddUiElemnt(btn2)
-    subMenu.AddUiElemnt(btn3)
+    btn2.BindAction(ActionForBindDicrement)
 
+    subMenu.AddUiElemnt(btn1)
+    subMenu.AddUiElemnt(text)
+    subMenu.AddUiElemnt(btn2)
+
+    subMenu31 = Menu("Submenu31", 200, 100, (255, 255, 255), orientation="horizontal")
+    text1 = Text("Text1", 20, (0, 0, 0))
+    text2 = Text("TExt2", 20, (0, 0, 0))
+    subMenu31.AddUiElemnt(text1)
+    subMenu31.AddUiElemnt(text2)
+
+    subMenu2.AddUiElemnt(subMenu31)
     menu.AddUiElemnt(subMenu2)
     menu.AddUiElemnt(subMenu3)
+
     while True:
         screen.fill((33, 174, 233))
+
+        for event in pygame.event.get():
+            menu.HandleEvent(event)
+
+        menu.update()
 
         menu.blit()
 
