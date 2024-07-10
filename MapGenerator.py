@@ -8,6 +8,7 @@ from Tiles.HardTile import HardTile
 from Tiles.MovableTile import MovableTile
 from Tiles.InteractiveTile import InteractiveTile
 from Menu.Menu import Menu
+from Menu.Button import Text, Button
 from LevelLoader import LevelLoader
 from Serialization import Serialization
 from Game import Game
@@ -38,11 +39,54 @@ class MapGenerator:
 
         MapGenerator.InitImages()
         Game.InitializePygame()
-        MapGenerator.__menu = Menu()
+        MapGenerator.__menu = Menu("Creator Form", 500, 1000, (255,255,255), 1400,50)
+        # Создаем подменю для изменения слоя рисования, добавляем его в меню
+        subMenuLayer = Menu("Layer selection", 400, 100, (0 ,0 ,255), orientation="horizontal")
+        MapGenerator.__menu.AddUiElemnt(subMenuLayer)
+
+        # Создаем текстовый блок (+,- и кнопку), добавляем их в подменю
+        btnPlus = Button("+", 20, 20, 20, (243, 243, 243))
+        btnPlus.BindAction(MapGenerator.IncrLayer)
+
+        btnMenus = Button("-", 20, 20, 20, (243, 243, 243))
+        btnMenus.BindAction(MapGenerator.DecrLayer)
+
+        MapGenerator.__textQuantity = Text(str(MapGenerator.__currentLayerIndex), 20)
+
+        subMenuLayer.AddUiElemnt(btnMenus)
+        subMenuLayer.AddUiElemnt(MapGenerator.__textQuantity)
+        subMenuLayer.AddUiElemnt(btnPlus)
+
+
         MapGenerator.__map = MapGenerator.InitTileMap()
         Game.Initialize(tileMapsGroup=MapGenerator.__map, customEventHandler=MapGenerator.EventHandler)
         Game.customMenuHandler = MapGenerator.ShowMenu
         Game.Start()
+
+    @staticmethod
+    def IncrLayer():
+        print("Incremented")
+        if MapGenerator.__currentLayerIndex < 4:  # TODO - сделать так, чтобы можно было управлять слоями через меню
+            MapGenerator.__currentLayerIndex += 1
+
+            if len(MapGenerator.__map.sprites()) < MapGenerator.__currentLayerIndex + 1:
+                MapGenerator.__map.add(TileMap())
+                print("New layer added.")
+
+            MapGenerator.__textQuantity.UpdateText(str(MapGenerator.__currentLayerIndex))
+
+        MapGenerator.__currentTileMap = MapGenerator.__map.sprites()[MapGenerator.__currentLayerIndex]
+
+    @staticmethod
+    def DecrLayer():
+        print("Decremented")
+        if MapGenerator.__currentLayerIndex > 0:
+            MapGenerator.__currentLayerIndex -= 1
+
+            MapGenerator.__textQuantity.UpdateText(str(MapGenerator.__currentLayerIndex))
+
+        MapGenerator.__currentTileMap = MapGenerator.__map.sprites()[MapGenerator.__currentLayerIndex]
+
 
     @staticmethod
     def InitTileMap():
@@ -80,8 +124,8 @@ class MapGenerator:
         #tile.update()
         #tile.Blitme()
         if MapGenerator.__menu.need_show == True:
-            MapGenerator.__menu.Update()
-            MapGenerator.__menu.Blitme()
+            MapGenerator.__menu.update()
+            MapGenerator.__menu.blit()
 
     @staticmethod
     def SaveMap():
@@ -135,19 +179,16 @@ class MapGenerator:
             elif event.key == pygame.K_F5:
                 MapGenerator.SaveMap()
             elif event.key == pygame.K_F1 or event.key == pygame.K_F2:
-                if event.key == pygame.K_F1 and MapGenerator.__currentLayerIndex > 0:
-                    MapGenerator.__currentLayerIndex -= 1
-                elif event.key == pygame.K_F2 and MapGenerator.__currentLayerIndex < 4:  # TODO - сделать так, чтобы можно было управлять слоями через меню
-                    MapGenerator.__currentLayerIndex += 1
+                if event.key == pygame.K_F1:
+                    MapGenerator.DecrLayer()
+                elif event.key == pygame.K_F2:  # TODO - сделать так, чтобы можно было управлять слоями через меню
+                    MapGenerator.IncrLayer()
 
-                    if len(MapGenerator.__map.sprites()) < MapGenerator.__currentLayerIndex + 1:
-                        MapGenerator.__map.add(TileMap())
-                        print("New layer added.")
 
-                MapGenerator.__currentTileMap = MapGenerator.__map.sprites()[MapGenerator.__currentLayerIndex]
             elif event.key == pygame.K_ESCAPE:
                 MapGenerator.__menu.need_show = not MapGenerator.__menu.need_show
 
+        MapGenerator.__menu.HandleEvent(event)
 
 if __name__ == "__main__":
     MapGenerator.Start()

@@ -34,6 +34,11 @@ class Menu(UIElement):
         self.titleRect.bottom = self.main_rect.top
         self.titleRect.left = self.main_rect.left
 
+        # Окей, а как же другие элементы?
+        for element in self.ui_elements.sprites()[:]:
+            self.ui_elements.remove(element)
+            self.AddUiElemnt(element)
+
     def GetTop(self):
         return self.titleRect.top
 
@@ -135,8 +140,13 @@ if __name__ == "__main__":
     Config.InternalSetPyGame(pygame)
     menu = Menu("Menu", 500, 1000, (60,60,60), 200, 50)
     subMenu = Menu("Submenu", 400, 500, (90,90,0), orientation="horizontal")
-    subMenu2 = Menu("Submenu2", 400, 150, (0,0,0))
+    subMenu2 = Menu("Submenu2", 400, 150, (154,45,0))
     subMenu3 = Menu("Submenu3", 400, 150, (0,0,0))
+    subMenu4 = Menu("Submenu4", 400, 150, (0, 3, 0))
+    subMenu5 = Menu("Submenu5", 400, 150, (0, 7, 0))
+    subMenu6 = Menu("Submenu6", 400, 150, (0, 9, 0))
+
+
 
     text = Text(str(curValue), 20, (0, 0, 0))
 
@@ -150,6 +160,7 @@ if __name__ == "__main__":
     subMenu.AddUiElemnt(text)
     subMenu.AddUiElemnt(btn2)
 
+    # TODO - не позиционируются элементы с большой глубиной
     subMenu31 = Menu("Submenu31", 200, 100, (255, 255, 255), orientation="horizontal")
     text1 = Text("Text1", 20, (0, 0, 0))
     text2 = Text("TExt2", 20, (0, 0, 0))
@@ -159,6 +170,9 @@ if __name__ == "__main__":
     subMenu2.AddUiElemnt(subMenu31)
     menu.AddUiElemnt(subMenu2)
     menu.AddUiElemnt(subMenu3)
+    subMenu31.AddUiElemnt(subMenu4)
+    subMenu4.AddUiElemnt(subMenu5)
+    subMenu5.AddUiElemnt(subMenu6)
 
     while True:
         screen.fill((33, 174, 233))
