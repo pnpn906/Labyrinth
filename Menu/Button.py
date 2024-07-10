@@ -4,13 +4,14 @@ from Config import Config
 from UiElement import UIElement
 
 class Text(UIElement):
-    def __init__(self, text, size, color=(0,0,0), x=0,y = 0):
+    def __init__(self, text, size, color=(0,0,0), x=0,y = 0, high_light_after_pressed = False):
         super().__init__(0,0, color, x, y)
 
         self.font = pygame.font.SysFont("arial", size)
         self.btn_text = self.font.render(text, False, color)
+        self.root_text = text
         self.main_rect = self.btn_text.get_rect()
-
+        self.need_high_light_after_pressed = high_light_after_pressed
         self.main_rect.x = x
         self.main_rect.y = y
 
@@ -23,34 +24,15 @@ class Text(UIElement):
         self.main_rect.x = oldX
         self.main_rect.y = oldY
 
+    def high_light(self):
+        self.font.set_underline(self.need_high_light_after_pressed)
+        self.UpdateText(self.root_text)
+        self.font.set_underline(False)
+
+        print("HIGHTLIE")
+
     def blit(self):
         Config.get_Screen().blit(self.btn_text, self.main_rect)
-
-class SelectorListText(UIElement):
-    def __init__(self, values:list, size, color=(0,0,0), x=0,y = 0, orientation="horizontal"):
-        super().__init__(0, 0, x= x,y= y)
-        self.ui_elements = pygame.sprite.Group()
-        self.currentSelectedText = None
-
-        if len(values) == 0:
-            raise Exception("Values can not be empty.")
-
-        for val in values:
-            text = Text(val, size, color)
-            self.ui_elements.add(text)
-
-        # Orientation Block
-        self.spacing = 30
-        self.orientation = orientation  # не используется нигде, хотя должна
-
-        if self.orientation == "horizontal":
-            pass
-
-    def blit(self):
-        super().blit()
-
-        for el in self.ui_elements.sprites():
-            el.blit()
 
 class Button(UIElement):
     def __init__(self,text, size, width, height, color=(0,0,0), x=0,y = 0):
