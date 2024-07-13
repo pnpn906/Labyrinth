@@ -1,0 +1,23 @@
+from UiElement import UIElement
+from Config import Config
+import pygame
+
+class Image(UIElement):
+    def __init__(self, texture, hight_light_color, width, height, x=0, y=0):
+        super().__init__(width + 2, height + 2, hight_light_color, x=x, y=y)
+
+        image = pygame.image.load(f"{texture}").convert_alpha()
+        self.image = pygame.transform.scale(image, (width, height))
+        self.img_rect = self.image.get_rect()
+        self.need_high_light = False
+
+    def high_light(self, hight_light=True):
+        self.need_high_light = hight_light
+    def RebuildFromMain(self):
+
+        super().RebuildFromMain()
+        self.img_rect.center = self.main_rect.center
+    def blit(self):
+        if self.need_high_light:
+            super().blit()
+        Config.get_Screen().blit(self.image,self.img_rect)

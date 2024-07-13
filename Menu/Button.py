@@ -4,14 +4,13 @@ from Config import Config
 from UiElement import UIElement
 
 class Text(UIElement):
-    def __init__(self, text, size, color=(0,0,0), x=0,y = 0, high_light_after_pressed = False):
+    def __init__(self, text, size, color=(0,0,0), x=0,y = 0):
         super().__init__(0,0, color, x, y)
 
         self.font = pygame.font.SysFont("arial", size)
         self.btn_text = self.font.render(text, False, color)
         self.root_text = text
         self.main_rect = self.btn_text.get_rect()
-        self.need_high_light_after_pressed = high_light_after_pressed
         self.main_rect.x = x
         self.main_rect.y = y
 
@@ -24,8 +23,8 @@ class Text(UIElement):
         self.main_rect.x = oldX
         self.main_rect.y = oldY
 
-    def high_light(self):
-        self.font.set_underline(self.need_high_light_after_pressed)
+    def high_light(self, hight_light=True):
+        self.font.set_underline(hight_light)
         self.UpdateText(self.root_text)
         self.font.set_underline(False)
 

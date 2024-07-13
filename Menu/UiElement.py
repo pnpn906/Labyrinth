@@ -7,7 +7,6 @@ class UIElement(Sprite):
         self.main_rect = pygame.rect.Rect(x, y, width, height)
         self.main_rect_color = color
         self.action = None
-        self.need_high_light_after_pressed = False
 
     def ChangeCoords(self, x_change, y_change):
         self.main_rect.x += x_change
@@ -40,15 +39,14 @@ class UIElement(Sprite):
         self.action = action
 
     def Pressed(self):
-        if self.need_high_light_after_pressed:
-            self.high_light()
-
         if self.action is not None:
             self.action()
 
     def CheckPressed(self, x, y):
         if self.main_rect.collidepoint(x,y):
             self.Pressed()
+            return True
+        return False
 
     def blit(self):
         pygame.draw.rect(Config.get_Screen(), self.main_rect_color, self.main_rect)
@@ -56,7 +54,7 @@ class UIElement(Sprite):
     def update(self, *args, **kwargs):
         pass
 
-    def high_light(self):
+    def high_light(self, hight_light=True):
         pass
 
     def HandleEvent(self, event):

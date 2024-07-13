@@ -3,6 +3,7 @@ from Config import Config
 from UiElement import UIElement
 from Button import Button, Text
 from ItemSelector import ItemSelector
+from Image import Image
 
 class Menu(UIElement):
     def __init__(self, title, width, height, background_color, x=0,y=0, orientation="vertical"):
@@ -182,19 +183,25 @@ if __name__ == "__main__":
 
     # ItemSelector
     textGroup = pygame.sprite.Group()
-    textGroup.add(Text("Select1", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select2", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select3", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select4", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select5", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select6", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select6", 20, (0, 0, 0), high_light_after_pressed=True))
-    textGroup.add(Text("Select6", 20, (0, 0, 0), high_light_after_pressed=True))
+    textGroup.add(Text("Select1", 20, (0, 0, 0)))
+    textGroup.add(Text("Select2", 20, (0, 0, 0)))
+    textGroup.add(Text("Select3", 20, (0, 0, 0)))
+    textGroup.add(Text("Select4", 20, (0, 0, 0)))
+    textGroup.add(Text("Select5", 20, (0, 0, 0)))
+    textGroup.add(Text("Select6", 20, (0, 0, 0)))
+    textGroup.add(Text("Select6", 20, (0, 0, 0)))
+    textGroup.add(Text("Select6", 20, (0, 0, 0)))
     itemSelector = ItemSelector(textGroup, 350, 250)
 
+    imgGroup = pygame.sprite.Group()
+    imgGroup.add(Image("fioor.png", (255,0,0), 30,30))
+    imgGroup.add(Image("fioor.png", (255,0,0), 30,30))
+    imgGroup.add(Image("fioor.png", (255,0,0), 30,30))
 
+    itemSelector2 = ItemSelector(imgGroup, 350, 250)
     subMenu3.AddUiElemnt(itemSelector)
 
+    subMenu.AddUiElemnt(itemSelector2)
     while True:
         screen.fill((33, 174, 233))
 
