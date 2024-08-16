@@ -1,4 +1,4 @@
-from UiElement import UIElement
+from UiElements.UiElement import UIElement
 import pygame
 
 class ItemSelector(UIElement):

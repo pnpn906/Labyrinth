@@ -38,13 +38,13 @@ class UIElement(Sprite):
     def BindAction(self, action):
         self.action = action
 
-    def Pressed(self):
+    def Pressed(self, **args):
         if self.action is not None:
-            self.action()
+            self.action(**args)   # TODO - ADD ARGS for sync texture index in mapgenerator
 
-    def CheckPressed(self, x, y):
+    def CheckPressed(self, x, y, **args):
         if self.main_rect.collidepoint(x,y):
-            self.Pressed()
+            self.Pressed(**args)
             return True
         return False
 
@@ -57,9 +57,9 @@ class UIElement(Sprite):
     def high_light(self, hight_light=True):
         pass
 
-    def HandleEvent(self, event):
+    def HandleEvent(self, event, **args):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x,y = event.pos
 
             if self.CheckPressed(x,y):
-                self.Pressed()
+                self.Pressed(**args)

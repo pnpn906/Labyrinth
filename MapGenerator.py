@@ -2,13 +2,15 @@ import datetime
 import json
 import pathlib
 
+from UiElements.ItemSelector import ItemSelector
 from Tiles.TileMap import TileMap
 from Tiles.Tile import Tile
 from Tiles.HardTile import HardTile
 from Tiles.MovableTile import MovableTile
 from Tiles.InteractiveTile import InteractiveTile
-from Menu.Menu import Menu
-from Menu.Button import Text, Button
+from UiElements.Menu import Menu
+from UiElements.Button import Text, Button
+from UiElements.Image import Image
 from LevelLoader import LevelLoader
 from Serialization import Serialization
 from Game import Game
@@ -30,6 +32,7 @@ class MapGenerator:
     __currentTileTypeIndex = 0
     __currentLayerIndex = 0
     __menu = None
+    __itemSelector : ItemSelector = None
 
     @staticmethod
     def Start():
@@ -40,8 +43,11 @@ class MapGenerator:
         MapGenerator.InitImages()
         Game.InitializePygame()
         MapGenerator.__menu = Menu("Creator Form", 500, 1000, (255,255,255), 1400,50)
+
+        # <editor-fold desc="MENU BLOCK LAYER">
+
         # Создаем подменю для изменения слоя рисования, добавляем его в меню
-        subMenuLayer = Menu("Layer selection", 400, 100, (0 ,0 ,255), orientation="horizontal")
+        subMenuLayer = Menu("Layer selection", 400, 100, (0, 0, 255), orientation="horizontal")
         MapGenerator.__menu.AddUiElemnt(subMenuLayer)
 
         # Создаем текстовый блок (+,- и кнопку), добавляем их в подменю
@@ -57,6 +63,25 @@ class MapGenerator:
         subMenuLayer.AddUiElemnt(MapGenerator.__textQuantity)
         subMenuLayer.AddUiElemnt(btnPlus)
 
+        # </editor-fold>
+
+        # <editor-fold desc="MENU BLOCK TILE">
+
+        subMenuTile = Menu("Tile selection", 400, 150, (0, 0, 255), orientation="horizontal")
+        MapGenerator.__menu.AddUiElemnt(subMenuTile)
+
+        imgGroup = pygame.sprite.Group()
+
+        for img in MapGenerator.__imgNames:
+            imgObj = Image(f"images/{img}", (255, 0, 0), 30, 30)
+            imgObj.BindAction(MapGenerator.__update_current_texture_index)
+            imgGroup.add(imgObj)
+
+        itemSelector = ItemSelector(imgGroup, 350, 250)
+        subMenuTile.AddUiElemnt(itemSelector)
+        MapGenerator.__itemSelector = itemSelector
+
+        # </editor-fold>
 
         MapGenerator.__map = MapGenerator.InitTileMap()
         Game.Initialize(tileMapsGroup=MapGenerator.__map, customEventHandler=MapGenerator.EventHandler)
@@ -142,6 +167,22 @@ class MapGenerator:
         print(f"[{datetime.datetime.now()}] Map saved to {filePath}")
 
     @staticmethod
+    def __update_current_texture_index(**args):
+        print("INVOKED")
+        print(args)
+        newTexturePath = args.get("texture", None)
+
+        if newTexturePath is None:
+            return
+
+        for coord in range(len(MapGenerator.__imgNames)):
+            print(f"neww texture: {newTexturePath}")
+            print(f"img texture: {MapGenerator.__imgNames[coord]}")
+            if newTexturePath.endswith(MapGenerator.__imgNames[coord]):
+                MapGenerator.__currentTextureIndex = coord
+                return
+
+    @staticmethod
     def EventHandler(event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos  # (0,1) - кортеж, в х положится 0, в у положится 1
@@ -149,6 +190,7 @@ class MapGenerator:
             y_abs = y // MapGenerator.__currentTileMap.height
 
             if event.button == 1:
+                #MapGenerator.__update_current_texture_index()
                 texture = MapGenerator.__imgNames[MapGenerator.__currentTextureIndex]
                 tileType = MapGenerator.__tileTypes[MapGenerator.__currentTileTypeIndex]
                 tile = tileType(texture=texture)
@@ -161,6 +203,7 @@ class MapGenerator:
             if event.key == pygame.K_e:
                 # [text1, text2, text3]
                 #          ind
+                # TODO - сделать так, чтобы не только карент текстур индекс менялся, но и выделение на селекторе
                 if MapGenerator.__currentTextureIndex < len(MapGenerator.__imgNames) - 1:
                     MapGenerator.__currentTextureIndex += 1
                 else:

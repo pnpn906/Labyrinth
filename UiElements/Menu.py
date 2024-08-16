@@ -1,9 +1,9 @@
 import pygame
 from Config import Config
-from UiElement import UIElement
-from Button import Button, Text
-from ItemSelector import ItemSelector
-from Image import Image
+from UiElements.UiElement import UIElement
+from UiElements.Button import Button, Text
+from UiElements.ItemSelector import ItemSelector
+from UiElements.Image import Image
 
 class Menu(UIElement):
     def __init__(self, title, width, height, background_color, x=0,y=0, orientation="vertical"):
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     Config.Initialize(screen)
     Config.InternalSetPyGame(pygame)
-    menu = Menu("Menu", 500, 1000, (60,60,60), 200, 50)
+    menu = Menu("UiElements", 500, 1000, (60,60,60), 200, 50)
     subMenu = Menu("Submenu", 400, 500, (90,90,0), orientation="horizontal")
     subMenu2 = Menu("Submenu2", 400, 150, (154,45,0))
     subMenu3 = Menu("Submenu3", 400, 300, (233,233,233))

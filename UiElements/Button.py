@@ -1,7 +1,7 @@
 
 import pygame
 from Config import Config
-from UiElement import UIElement
+from UiElements.UiElement import UIElement
 
 class Text(UIElement):
     def __init__(self, text, size, color=(0,0,0), x=0,y = 0):
