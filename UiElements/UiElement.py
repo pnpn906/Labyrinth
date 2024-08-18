@@ -61,5 +61,6 @@ class UIElement(Sprite):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x,y = event.pos
 
+            print("UI ELEMENT INVOKED HANDLE")
             if self.CheckPressed(x,y):
                 self.Pressed(**args)

@@ -66,3 +66,14 @@ class ItemSelector(UIElement):
                     uiElement.high_light()
                     self.currentSelectedItem = uiElement
                     break
+
+    def SelectItemByCoord(self, coord):
+        all_ui_elements = self.ui_elements.sprites()
+
+        for i in range(len(all_ui_elements)):
+            uiElement = all_ui_elements[i]
+
+            if i == coord:
+                self.currentSelectedItem.high_light(False)
+                uiElement.high_light()
+                self.currentSelectedItem = uiElement

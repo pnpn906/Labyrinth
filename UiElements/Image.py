@@ -23,13 +23,7 @@ class Image(UIElement):
             super().blit()
         Config.get_Screen().blit(self.image,self.img_rect)
 
-    def HandleEvent(self, event, **args):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            x,y = event.pos
 
-            if self.CheckPressed(x,y):
-                print(args)
-                args["texture"] = self.texture
-                print(args)
-                print(**args)
-                self.Pressed(**args)
+    def CheckPressed(self, x, y, **args):
+        args["texture"] = self.texture
+        return super().CheckPressed(x, y, **args)

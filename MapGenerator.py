@@ -32,6 +32,7 @@ class MapGenerator:
     __currentTileTypeIndex = 0
     __currentLayerIndex = 0
     __menu = None
+
     __itemSelector : ItemSelector = None
 
     @staticmethod
@@ -115,8 +116,10 @@ class MapGenerator:
 
     @staticmethod
     def InitTileMap():
-        answer = input("Do you want to load exists map (y/n): ")
-        MapGenerator.__filePath = input("Enter path to map: ")
+        #answer = input("Do you want to load exists map (y/n): ")
+        answer = "n"
+        #MapGenerator.__filePath = input("Enter path to map: ")
+        MapGenerator.__filePath = "test.json"
 
         if answer == "y":
             map = LevelLoader.LoadLevel(MapGenerator.__filePath)
@@ -208,9 +211,13 @@ class MapGenerator:
                     MapGenerator.__currentTextureIndex += 1
                 else:
                     MapGenerator.__currentTextureIndex = 0
+
+                MapGenerator.__itemSelector.SelectItemByCoord(MapGenerator.__currentTextureIndex)
             elif event.key == pygame.K_q:
                 if MapGenerator.__currentTextureIndex > 0:
                     MapGenerator.__currentTextureIndex -= 1
+
+                    MapGenerator.__itemSelector.SelectItemByCoord(MapGenerator.__currentTextureIndex)
             elif event.key == pygame.K_2:
                 if MapGenerator.__currentTileTypeIndex < len(MapGenerator.__tileTypes) - 1:
                     MapGenerator.__currentTileTypeIndex += 1
