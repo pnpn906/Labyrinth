@@ -34,6 +34,7 @@ class MapGenerator:
     __menu = None
 
     __itemSelector : ItemSelector = None
+    __typeSelector : ItemSelector = None
 
     @staticmethod
     def Start():
@@ -81,6 +82,24 @@ class MapGenerator:
         itemSelector = ItemSelector(imgGroup, 350, 250)
         subMenuTile.AddUiElemnt(itemSelector)
         MapGenerator.__itemSelector = itemSelector
+
+        # </editor-fold>
+
+        # <editor-fold desc="MENU BLOCK Type">
+
+        subMenuType = Menu("Type selection", 400, 150, (0, 0, 255), orientation="horizontal")
+        MapGenerator.__menu.AddUiElemnt(subMenuType)
+
+        TextGroup = pygame.sprite.Group()
+
+        for _type in MapGenerator.__tileTypes:
+            textObj = Text(_type.__name__,20)
+            textObj.BindAction(MapGenerator.__update_current_type_index)
+            TextGroup.add(textObj)
+
+        typeSelector = ItemSelector(TextGroup, 350, 250)
+        subMenuType.AddUiElemnt(typeSelector)
+        MapGenerator.__typeSelector = typeSelector
 
         # </editor-fold>
 
@@ -171,18 +190,27 @@ class MapGenerator:
 
     @staticmethod
     def __update_current_texture_index(**args):
-        print("INVOKED")
-        print(args)
         newTexturePath = args.get("texture", None)
 
         if newTexturePath is None:
             return
 
         for coord in range(len(MapGenerator.__imgNames)):
-            print(f"neww texture: {newTexturePath}")
-            print(f"img texture: {MapGenerator.__imgNames[coord]}")
-            if newTexturePath.endswith(MapGenerator.__imgNames[coord]):
+            if newTexturePath.endswith(MapGenerator.__imgNames[coord]): # TODO - endswith не надежно
                 MapGenerator.__currentTextureIndex = coord
+                return
+
+    @staticmethod
+    def __update_current_type_index(**args):
+        newTextType = args.get("text", None)
+
+        if newTextType is None:
+            return
+
+        for coord in range(len(MapGenerator.__tileTypes)):
+            # Tile, HardTile, InteractiveTile, MovableTile
+            if newTextType == MapGenerator.__tileTypes[coord].__name__:
+                MapGenerator.__currentTileTypeIndex = coord
                 return
 
     @staticmethod
@@ -223,9 +251,12 @@ class MapGenerator:
                     MapGenerator.__currentTileTypeIndex += 1
                 else:
                     MapGenerator.__currentTileTypeIndex = 0
+
+                MapGenerator.__typeSelector.SelectItemByCoord(MapGenerator.__currentTileTypeIndex)
             elif event.key == pygame.K_1:
                 if MapGenerator.__currentTileTypeIndex > 0:
                     MapGenerator.__currentTileTypeIndex -= 1
+                    MapGenerator.__typeSelector.SelectItemByCoord(MapGenerator.__currentTileTypeIndex)
             elif event.key == pygame.K_F5:
                 MapGenerator.SaveMap()
             elif event.key == pygame.K_F1 or event.key == pygame.K_F2:
