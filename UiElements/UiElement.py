@@ -41,6 +41,8 @@ class UIElement(Sprite):
     def Pressed(self, **args):
         if self.action is not None:
             self.action(**args)   # TODO - ADD ARGS for sync texture index in mapgenerator
+            return True
+        return False
 
     def CheckPressed(self, x, y, **args):
         if self.main_rect.collidepoint(x,y):
@@ -61,6 +63,9 @@ class UIElement(Sprite):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x,y = event.pos
 
-            print("UI ELEMENT INVOKED HANDLE")
             if self.CheckPressed(x,y):
                 self.Pressed(**args)
+
+                return True
+
+        return False

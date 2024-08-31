@@ -62,10 +62,20 @@ class Menu(UIElement):
         pass
 
     def HandleEvent(self, event):
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print(f"L:{self.GetLeft()} R:{self.GetRight()} T:{self.GetTop()} B:{self.GetBottom()}\n"
+                  f"Main_rect collided: {self.main_rect.collidepoint(event.pos[0], event.pos[1])}\n"
+                  f"Checking: ({event.pos[0]}, {event.pos[1]})\n")
+
+        result = super().HandleEvent(event)
+
         all_ui_elements = self.ui_elements.sprites()
 
         for uiElement in all_ui_elements:
-            uiElement.HandleEvent(event)
+            result |= uiElement.HandleEvent(event)
+
+        return result
 
     def AddUiElemnt(self, ui_element: UIElement):
         """

@@ -53,7 +53,10 @@ class ItemSelector(UIElement):
             el.blit()
 
     def HandleEvent(self, event):
-        super().HandleEvent(event)
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            pass
+
+        result = super().HandleEvent(event)
 
         all_ui_elements = self.ui_elements.sprites()
 
@@ -65,7 +68,10 @@ class ItemSelector(UIElement):
                     self.currentSelectedItem.high_light(False)
                     uiElement.high_light()
                     self.currentSelectedItem = uiElement
+                    result |= True
                     break
+
+        return result
 
     def SelectItemByCoord(self, coord):
         all_ui_elements = self.ui_elements.sprites()

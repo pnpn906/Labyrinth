@@ -214,23 +214,36 @@ class MapGenerator:
                 return
 
     @staticmethod
-    def EventHandler(event):
+    def HandleMapGenEvent(event):
+        """
+        Обработка события связанного с генерацией карты
+        - простановка тайлов, удаление их и т.п.
+        :param event:  Событие.
+        :return: True в случае обработки, иначе False.
+        """
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos  # (0,1) - кортеж, в х положится 0, в у положится 1
             x_abs = x // MapGenerator.__currentTileMap.width
             y_abs = y // MapGenerator.__currentTileMap.height
 
             if event.button == 1:
-                #MapGenerator.__update_current_texture_index()
                 texture = MapGenerator.__imgNames[MapGenerator.__currentTextureIndex]
                 tileType = MapGenerator.__tileTypes[MapGenerator.__currentTileTypeIndex]
                 tile = tileType(texture=texture)
                 MapGenerator.__currentTileMap.RemoveTile(x_abs, y_abs)
                 MapGenerator.__currentTileMap.AddTile(tile, x_abs, y_abs)
-            elif  event.button == 3:
+
+                return True
+            elif event.button == 3:
                 MapGenerator.__currentTileMap.RemoveTile(x_abs, y_abs)
 
-        elif event.type == pygame.KEYDOWN:
+                return True
+
+        return False
+
+    @staticmethod
+    def HandleControlPanelEvent(event):
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 # [text1, text2, text3]
                 #          ind
@@ -241,11 +254,14 @@ class MapGenerator:
                     MapGenerator.__currentTextureIndex = 0
 
                 MapGenerator.__itemSelector.SelectItemByCoord(MapGenerator.__currentTextureIndex)
+                return True
             elif event.key == pygame.K_q:
                 if MapGenerator.__currentTextureIndex > 0:
                     MapGenerator.__currentTextureIndex -= 1
 
                     MapGenerator.__itemSelector.SelectItemByCoord(MapGenerator.__currentTextureIndex)
+
+                    return True
             elif event.key == pygame.K_2:
                 if MapGenerator.__currentTileTypeIndex < len(MapGenerator.__tileTypes) - 1:
                     MapGenerator.__currentTileTypeIndex += 1
@@ -253,23 +269,43 @@ class MapGenerator:
                     MapGenerator.__currentTileTypeIndex = 0
 
                 MapGenerator.__typeSelector.SelectItemByCoord(MapGenerator.__currentTileTypeIndex)
+                return True
             elif event.key == pygame.K_1:
                 if MapGenerator.__currentTileTypeIndex > 0:
                     MapGenerator.__currentTileTypeIndex -= 1
                     MapGenerator.__typeSelector.SelectItemByCoord(MapGenerator.__currentTileTypeIndex)
+
+                    return True
             elif event.key == pygame.K_F5:
                 MapGenerator.SaveMap()
+
+                return True
             elif event.key == pygame.K_F1 or event.key == pygame.K_F2:
                 if event.key == pygame.K_F1:
                     MapGenerator.DecrLayer()
                 elif event.key == pygame.K_F2:  # TODO - сделать так, чтобы можно было управлять слоями через меню
                     MapGenerator.IncrLayer()
+                else:
+                    return False
 
+                return True
 
             elif event.key == pygame.K_ESCAPE:
                 MapGenerator.__menu.need_show = not MapGenerator.__menu.need_show
+                return True
 
-        MapGenerator.__menu.HandleEvent(event)
+    @staticmethod
+    def EventHandler(event):
+        handled = False
+
+        if (MapGenerator.__menu.need_show):
+            handled = MapGenerator.__menu.HandleEvent(event)
+
+        if not handled:
+            MapGenerator.HandleMapGenEvent(event)
+
+        MapGenerator.HandleControlPanelEvent(event)
+
 
 if __name__ == "__main__":
     MapGenerator.Start()
