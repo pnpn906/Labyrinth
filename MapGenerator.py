@@ -295,11 +295,23 @@ class MapGenerator:
                 return True
 
     @staticmethod
-    def EventHandler(event):
+    def HandleMenuEvent(event):
         handled = False
 
         if (MapGenerator.__menu.need_show):
             handled = MapGenerator.__menu.HandleEvent(event)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+
+                if MapGenerator.__menu.CheckPressed(x, y):
+                    handled = True
+
+        return handled
+
+    @staticmethod
+    def EventHandler(event):
+        handled = MapGenerator.HandleMenuEvent(event)
 
         if not handled:
             MapGenerator.HandleMapGenEvent(event)

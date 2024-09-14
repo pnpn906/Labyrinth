@@ -58,10 +58,12 @@ class Menu(UIElement):
         for uiElement in all_ui_elements:
             uiElement.update()
 
-    def CheckPressed(self, x, y):
-        pass
+    def CheckPressed(self, x, y,  **args):
+        if self.main_rect.collidepoint(x, y):
+            return True
+        return False
 
-    def HandleEvent(self, event):
+    def HandleEvent(self, event, **args):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(f"L:{self.GetLeft()} R:{self.GetRight()} T:{self.GetTop()} B:{self.GetBottom()}\n"
@@ -76,6 +78,7 @@ class Menu(UIElement):
             result |= uiElement.HandleEvent(event)
 
         return result
+
 
     def AddUiElemnt(self, ui_element: UIElement):
         """
