@@ -5,6 +5,8 @@ from pygame.sprite import Group
 from Tiles.Tile import Tile
 from Characters.Player import Player
 from Tiles.HardTile import HardTile
+from UiElements.Menu import Menu
+from UiElements.Button import Button
 
 class Game:
     MAP_ARG = "tileMapsGroup"
@@ -17,6 +19,8 @@ class Game:
     screen = None
     eventHandler = None
     customMenuHandler = None
+    mainMenu = None
+    levelsMenu = None
 
     @staticmethod
     def InitializePygame():
@@ -54,6 +58,22 @@ class Game:
 
         Game.player = Player("images/traveler.png")
 
+        # Main menu
+
+        menu = Menu("MAIN MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
+
+        btn1 = Button("продолжить", 20, 470, 40, (243, 243, 223))
+        btn2 = Button("новая игра", 20, 470, 40, (243, 243, 223))
+        btn3 = Button("выбор уровня", 20, 470, 40, (243, 243, 223))
+        btn4 = Button("выход", 20, 470, 40, (243, 243, 223))
+
+
+        menu.AddUiElemnt(btn1)
+        menu.AddUiElemnt(btn2)
+        menu.AddUiElemnt(btn3)
+        menu.AddUiElemnt(btn4)
+
+        Game.mainMenu = menu
 
         Game.initialized = True
 
@@ -64,12 +84,16 @@ class Game:
 
         Game.player.blit()
 
+        Game.mainMenu.blit()
+
     @staticmethod
     def UpdateObjects():
         for tileMap in Game.map.sprites():  # TODO - переделать на общий апдейт
             tileMap.update()
 
         Game.player.update()
+
+        Game.mainMenu.update()
 
     @staticmethod
     def HandleEvents():

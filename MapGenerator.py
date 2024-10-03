@@ -135,10 +135,10 @@ class MapGenerator:
 
     @staticmethod
     def InitTileMap():
-        #answer = input("Do you want to load exists map (y/n): ")
-        answer = "n"
-        #MapGenerator.__filePath = input("Enter path to map: ")
-        MapGenerator.__filePath = "test.json"
+        answer = input("Do you want to load exists map (y/n): ")
+        # answer = "n"
+        MapGenerator.__filePath = "Maps\\" + input("Enter map file name: ")
+        #MapGenerator.__filePath = "test.json"
 
         if answer == "y":
             map = LevelLoader.LoadLevel(MapGenerator.__filePath)

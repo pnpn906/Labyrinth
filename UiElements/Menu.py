@@ -6,7 +6,7 @@ from UiElements.ItemSelector import ItemSelector
 from UiElements.Image import Image
 
 class Menu(UIElement):
-    def __init__(self, title, width, height, background_color, x=0,y=0, orientation="vertical"):
+    def __init__(self, title, width, height, background_color, x=0,y=0, orientation="vertical", alignment="left"):
         super().__init__(width, height, background_color, x, y)
 
         self.title = title
@@ -17,6 +17,7 @@ class Menu(UIElement):
         # Orientation Block
         self.spacing = 30
         self.orientation = orientation    # не используется нигде, хотя должна
+        self.alignment = alignment
 
         # Title Block
         self.textColor = (0, 0, 0)
@@ -115,8 +116,15 @@ class Menu(UIElement):
                 relativeTop = relative_ui_elemnt.GetBottom()
 
             newTop = relativeTop + self.spacing
+            newLeft = self.GetLeft() + 30
 
-            ui_element.SetCoords(self.GetLeft() + 30,newTop)
+            if self.alignment == "center":
+                newLeft = self.main_rect.centerx - ui_element.main_rect.width // 2
+
+                # для топа нужна перестройка, иначе в центре будет постонно только первый элемент, остальные будут ниже
+                # newTop = self.main_rect.centery + self.spacing - ui_element.main_rect.height // 2
+
+            ui_element.SetCoords(newLeft, newTop)
         else:
             relativeTop = self.main_rect.top
             newTop = relativeTop + self.spacing

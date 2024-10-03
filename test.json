@@ -1,5 +1,0 @@
-{"layer_0": {
-  "Tile": [{"texture": "darkness.png", "x": 38, "y": 10}],
-  "HardTile": [{"texture": "darkness.png", "x": 14, "y": 9}, {"texture": "darkness.png", "x": 15, "y": 10}],
-  "InteractiveTile": [{"texture": "darkness.png", "x": 16, "y": 12}, {"texture": "darkness.png", "x": 17, "y": 13}]},
-  "layer_1": {}}
