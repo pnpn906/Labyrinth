@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from Config import Config
 from UiElements.UiElement import UIElement
@@ -81,7 +83,7 @@ class Menu(UIElement):
         return result
 
 
-    def AddUiElemnt(self, ui_element: UIElement):
+    def AddUiElemnt(self, ui_element: UIElement, needReAdd=False):
         """
         Чтобы правильно все позиционировалось необходимо строить дерево следующим образом:
         - создал элемент родителя (э1)
@@ -122,9 +124,49 @@ class Menu(UIElement):
                 newLeft = self.main_rect.centerx - ui_element.main_rect.width // 2
 
                 # для топа нужна перестройка, иначе в центре будет постонно только первый элемент, остальные будут ниже
-                # newTop = self.main_rect.centery + self.spacing - ui_element.main_rect.height // 2
+                if relative_ui_elemnt == self:
+                    newTop = self.main_rect.centery - ui_element.main_rect.height // 2
 
-            ui_element.SetCoords(newLeft, newTop)
+                ui_element.SetCoords(newLeft, newTop)
+
+                self.ui_elements.add(ui_element)
+
+                h_common = (len(self.ui_elements.sprites()) - 1) * self.spacing
+
+                for el in self.ui_elements.sprites():
+                    h_common += el.main_rect.height
+
+                h_common_center = h_common // 2
+
+                # y center point of full object
+                y_common_center = self.ui_elements.sprites()[0].GetTop() + h_common_center
+
+
+                center_sprite: UIElement = Menu.__find_nearest_object_to_point_y(y_common_center, self.ui_elements)
+
+                ro_from_center_group_to_top_sprite = abs(center_sprite.GetTop() - y_common_center)
+                ro_from_center_screen_to_top_sprite = abs(center_sprite.GetTop() - Config.get_Screen().get_rect().centery)
+
+                for sprite in self.ui_elements.sprites():
+                    sprite.ChangeCoords(0, -abs(ro_from_center_screen_to_top_sprite - ro_from_center_group_to_top_sprite))
+
+                #center_sprite: UIElement = None
+
+                #for el in self.ui_elements.sprites():
+                #    if el.main_rect.collidepoint(el.main_rect.x, y_common_center):
+                #        center_sprite = el
+                #        break
+
+
+
+
+                if center_sprite is not None:
+                    return  # TODO
+                else:
+                    return
+            else:
+                ui_element.SetCoords(newLeft, newTop)
+                self.ui_elements.add(ui_element)
         else:
             relativeTop = self.main_rect.top
             newTop = relativeTop + self.spacing
@@ -137,7 +179,21 @@ class Menu(UIElement):
             newLeft = relative_right + self.spacing
             ui_element.SetCoords(newLeft, newTop)
 
-        self.ui_elements.add(ui_element)
+            self.ui_elements.add(ui_element)
+
+    @staticmethod
+    def __find_nearest_object_to_point_y(y, group: pygame.sprite.Group):
+        result = None
+        min_distance = sys.maxsize * 2 + 1  # BIG INT
+
+        for sprite in group.sprites():
+            dist = abs(y - sprite.GetTop())
+            if dist < min_distance:
+                min_distance = dist
+                result = sprite
+
+        return result
+
 
 
 if __name__ == "__main__":

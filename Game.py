@@ -1,4 +1,5 @@
 import pygame
+import sys
 from Config import Config
 from Tiles.TileMap import TileMap
 from pygame.sprite import Group
@@ -19,7 +20,7 @@ class Game:
     screen = None
     eventHandler = None
     customMenuHandler = None
-    mainMenu = None
+    mainMenu : Menu = None
     levelsMenu = None
 
     @staticmethod
@@ -67,6 +68,7 @@ class Game:
         btn3 = Button("выбор уровня", 20, 470, 40, (243, 243, 223))
         btn4 = Button("выход", 20, 470, 40, (243, 243, 223))
 
+        btn4.BindAction(Game.Quit)
 
         menu.AddUiElemnt(btn1)
         menu.AddUiElemnt(btn2)
@@ -103,10 +105,15 @@ class Game:
                 Game.player.moving(event.key, True)
             elif event.type == pygame.KEYUP:
                 Game.player.moving(event.key, False)
+            else:
+                Game.mainMenu.HandleEvent(event)
 
             if Game.eventHandler is not None:
                 Game.eventHandler(event)
 
+    @staticmethod
+    def Quit(**kwargs):
+        sys.exit()
 
     @staticmethod
     def Start():
@@ -123,6 +130,7 @@ class Game:
                 Game.customMenuHandler()
 
             pygame.display.flip()
+
 
 
 if __name__ == "__main__":
