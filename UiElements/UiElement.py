@@ -63,8 +63,8 @@ class UIElement(Sprite):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             x,y = event.pos
 
-            if self.CheckPressed(x,y):
-                self.Pressed(**args)
+            if self.CheckPressed(x,y, **args):
+                #self.Pressed(**args)
 
                 return True
 

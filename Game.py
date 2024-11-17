@@ -7,6 +7,7 @@ from Tiles.Tile import Tile
 from Characters.Player import Player
 from Tiles.HardTile import HardTile
 from UiElements.Menu import Menu
+from UiElements.PagedMenu import PagedMenu
 from UiElements.Button import Button
 
 class Game:
@@ -20,7 +21,7 @@ class Game:
     screen = None
     eventHandler = None
     customMenuHandler = None
-    mainMenu : Menu = None
+    mainMenu : PagedMenu = None
     levelsMenu = None
 
     @staticmethod
@@ -54,7 +55,6 @@ class Game:
 
             Game.map.add(tileMap)
 
-        # TODO - наверное, в генераторе лучше не проверять коллизии или вообще добавить какую-нибудь настройку
         Config.InternalSetTileMap(Game.map)
 
         Game.player = Player("images/traveler.png")
@@ -75,7 +75,19 @@ class Game:
         menu.AddUiElemnt(btn3)
         menu.AddUiElemnt(btn4)
 
-        Game.mainMenu = menu
+        menuLvl = Menu("LEVEL MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
+        menuLvlBtns = Menu("", Game.screen.get_width() - 100, Game.screen.get_height() - 200, (10,10,60), 0, 0, orientation="horizontal")
+        menuLvl.AddUiElemnt(menuLvlBtns)
+
+        for i in range(3):
+            btnLvl = Button(f"lvl {i+1}", 20, 30, 40, (243, 243, 223))
+            menuLvlBtns.AddUiElemnt(btnLvl)
+
+        btnBackToMainMenu = Button("Back", 20, 470, 40, (243, 243, 223))
+
+        menuLvl.AddUiElemnt(btnBackToMainMenu)
+
+        Game.mainMenu = PagedMenu(menu, menuLvl, back_bind = [btnBackToMainMenu], next_bind = [btn3])
 
         Game.initialized = True
 

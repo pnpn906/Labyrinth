@@ -161,6 +161,7 @@ class Menu(UIElement):
 
 
                 if center_sprite is not None:
+                    print("ERROR")
                     return  # TODO
                 else:
                     return

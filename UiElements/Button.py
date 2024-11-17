@@ -33,6 +33,7 @@ class Text(UIElement):
     def blit(self):
         Config.get_Screen().blit(self.btn_text, self.main_rect)
 
+
     def CheckPressed(self, x, y, **args):
         args["text"] = self.root_text
         return super().CheckPressed(x, y, **args)
@@ -59,4 +60,5 @@ class Button(UIElement):
     def blit(self):
         super().blit()
         Config.get_Screen().blit(self.btn_text, self.text_rect)
+        print(self.text)
 
