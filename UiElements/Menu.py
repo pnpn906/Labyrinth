@@ -39,9 +39,13 @@ class Menu(UIElement):
         self.titleRect.bottom = self.main_rect.top
         self.titleRect.left = self.main_rect.left
 
+        copyUiElements = self.ui_elements.sprites()[:]
+
         # Окей, а как же другие элементы?
-        for element in self.ui_elements.sprites()[:]:
+        for element in copyUiElements:
             self.ui_elements.remove(element)
+
+        for element in copyUiElements:
             self.AddUiElemnt(element)
 
     def GetTop(self):
@@ -169,16 +173,24 @@ class Menu(UIElement):
                 ui_element.SetCoords(newLeft, newTop)
                 self.ui_elements.add(ui_element)
         else:
-            relativeTop = self.main_rect.top
-            newTop = relativeTop + self.spacing
+            #relativeTop = self.main_rect.top
+            #newTop = relativeTop + self.spacing
 
             if relative_ui_elemnt == self:
                 relative_right = relative_ui_elemnt.main_rect.left
+                relativeTop = self.main_rect.top
+                newTop = relativeTop + self.spacing
             else:
                 relative_right = relative_ui_elemnt.GetRight()
+                newTop = relative_ui_elemnt.GetTop()
 
             newLeft = relative_right + self.spacing
             ui_element.SetCoords(newLeft, newTop)
+
+            if ui_element.GetRight() + self.spacing > self.main_rect.right:
+                newTop = ui_element.GetBottom() + self.spacing
+                newLeft = self.GetLeft() + self.spacing
+                ui_element.SetCoords(newLeft, newTop)
 
             self.ui_elements.add(ui_element)
 

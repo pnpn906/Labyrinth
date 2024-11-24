@@ -76,11 +76,11 @@ class Game:
         menu.AddUiElemnt(btn4)
 
         menuLvl = Menu("LEVEL MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
-        menuLvlBtns = Menu("", Game.screen.get_width() - 100, Game.screen.get_height() - 200, (10,10,60), 0, 0, orientation="horizontal")
+        menuLvlBtns = Menu("", Game.screen.get_width() - 100, Game.screen.get_height() - 200, (60,60,60), 0, 0, orientation="horizontal")
         menuLvl.AddUiElemnt(menuLvlBtns)
 
-        for i in range(3):
-            btnLvl = Button(f"lvl {i+1}", 20, 30, 40, (243, 243, 223))
+        for i in range(30):
+            btnLvl = Button(f"lvl {i+1}", 30, 119, 119, (243, 243, 223))
             menuLvlBtns.AddUiElemnt(btnLvl)
 
         btnBackToMainMenu = Button("Back", 20, 470, 40, (243, 243, 223))
