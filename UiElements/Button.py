@@ -51,14 +51,16 @@ class Button(UIElement):
         font = pygame.font.SysFont("arial", size)
         self.text = text
         self.btn_text = font.render(text, False, (0,0,0), self.main_rect_color)
-
+        self.additionalArgs = {}
         self.text_rect = self.btn_text.get_rect()
         self.RebuildFromMain()
+
+    def Pressed(self, **args):
+        super().Pressed(sender=self, **args)
 
     def RebuildFromMain(self):
         self.text_rect.center = self.main_rect.center
     def blit(self):
         super().blit()
         Config.get_Screen().blit(self.btn_text, self.text_rect)
-        print(self.text)
 

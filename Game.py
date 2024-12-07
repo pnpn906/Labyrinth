@@ -1,5 +1,6 @@
 import pygame
 import sys
+import LevelLoader
 from Config import Config
 from Tiles.TileMap import TileMap
 from pygame.sprite import Group
@@ -9,20 +10,21 @@ from Tiles.HardTile import HardTile
 from UiElements.Menu import Menu
 from UiElements.PagedMenu import PagedMenu
 from UiElements.Button import Button
+from Levels.Level import Level
 
 class Game:
-    MAP_ARG = "tileMapsGroup"
+    LEVEL_ARG = "levelArg"
     CUSTOM_EVENT_HANDLER_ARG = "customEventHandler"
-
+    showMenu = True
     initialized = False
     pygameInitialized = False
-    player = None
-    map: Group = Group()
     screen = None
+    player = None
     eventHandler = None
     customMenuHandler = None
     mainMenu : PagedMenu = None
     levelsMenu = None
+    currentLevel : Level = None
 
     @staticmethod
     def InitializePygame():
@@ -41,83 +43,101 @@ class Game:
         if kwargs.keys().__contains__(Game.CUSTOM_EVENT_HANDLER_ARG) and kwargs[Game.CUSTOM_EVENT_HANDLER_ARG] is not None:
             Game.eventHandler = kwargs[Game.CUSTOM_EVENT_HANDLER_ARG]
 
-        if kwargs.keys().__contains__(Game.MAP_ARG) and kwargs[Game.MAP_ARG] is not None:
-            Game.map = kwargs[Game.MAP_ARG]
-        else:
-            tileMap = TileMap()
+        if kwargs.keys().__contains__(Game.LEVEL_ARG) and kwargs[Game.LEVEL_ARG] is not None:
+            Game.currentLevel = kwargs[Game.LEVEL_ARG]
+        else:   
+            Game.currentLevel = Level(0)
 
-            tileMap.AddTile(Tile(texture="fioor.png"), 2, 3)
-            tileMap.AddTile(Tile(texture="fioor.png"), 3, 3)
-            tileMap.AddTile(Tile(texture="fioor.png"), 3, 4)
-            tileMap.AddTile(HardTile(texture="fioor.png"), 10, 4)
-            tileMap.AddTile(HardTile(texture="fioor.png"), 10, 5)
-            tileMap.AddTile(HardTile(texture="fioor.png"), 10, 6)
-
-            Game.map.add(tileMap)
-
-        Config.InternalSetTileMap(Game.map)
+        Config.InternalSetTileMap(Game.currentLevel.map)
 
         Game.player = Player("images/traveler.png")
+        Game.currentLevel.player = Game.player
 
-        # Main menu
+        Game.showMenu = kwargs.get("showMenu", True)
 
-        menu = Menu("MAIN MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
+        if Game.showMenu:
 
-        btn1 = Button("продолжить", 20, 470, 40, (243, 243, 223))
-        btn2 = Button("новая игра", 20, 470, 40, (243, 243, 223))
-        btn3 = Button("выбор уровня", 20, 470, 40, (243, 243, 223))
-        btn4 = Button("выход", 20, 470, 40, (243, 243, 223))
+            # Main menu
 
-        btn4.BindAction(Game.Quit)
+            menu = Menu("MAIN MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
 
-        menu.AddUiElemnt(btn1)
-        menu.AddUiElemnt(btn2)
-        menu.AddUiElemnt(btn3)
-        menu.AddUiElemnt(btn4)
+            btn1 = Button("продолжить", 20, 470, 40, (243, 243, 223))
+            btn2 = Button("новая игра", 20, 470, 40, (243, 243, 223))
+            btn3 = Button("выбор уровня", 20, 470, 40, (243, 243, 223))
+            btn4 = Button("выход", 20, 470, 40, (243, 243, 223))
 
-        menuLvl = Menu("LEVEL MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
-        menuLvlBtns = Menu("", Game.screen.get_width() - 100, Game.screen.get_height() - 200, (60,60,60), 0, 0, orientation="horizontal")
-        menuLvl.AddUiElemnt(menuLvlBtns)
+            btn4.BindAction(Game.Quit)
 
-        for i in range(30):
-            btnLvl = Button(f"lvl {i+1}", 30, 119, 119, (243, 243, 223))
-            menuLvlBtns.AddUiElemnt(btnLvl)
+            menu.AddUiElemnt(btn1)
+            menu.AddUiElemnt(btn2)
+            menu.AddUiElemnt(btn3)
+            menu.AddUiElemnt(btn4)
 
-        btnBackToMainMenu = Button("Back", 20, 470, 40, (243, 243, 223))
+            menuLvl = Menu("LEVEL MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
+            menuLvlBtns = Menu("", Game.screen.get_width() - 100, Game.screen.get_height() - 200, (60,60,60), 0, 0, orientation="horizontal")
+            menuLvl.AddUiElemnt(menuLvlBtns)
 
-        menuLvl.AddUiElemnt(btnBackToMainMenu)
+            # Вытащить из директории все файлы - это уровни
 
-        Game.mainMenu = PagedMenu(menu, menuLvl, back_bind = [btnBackToMainMenu], next_bind = [btn3])
+            # Пройти все файлы
+
+            # Для каждого создать кнопку
+
+            # Подгрузить через левел лоадер
+
+            # Сделать бинд на кнопку, чтобы проставлялся текущий уровень при нажатии
+
+            listOfLevels = LevelLoader.LevelLoader.GetListOfLevelMaps()
+            for i in range(len(listOfLevels)):
+                btnLvl = Button(f"{i+1}", 30, 119, 119, (243, 243, 223))
+                btnLvl.BindAction(Game.LevelChoosed_Action)
+                btnLvl.additionalArgs["filePath"] = listOfLevels[i]
+                menuLvlBtns.AddUiElemnt(btnLvl)
+
+            btnBackToMainMenu = Button("Back", 20, 470, 40, (243, 243, 223))
+
+            menuLvl.AddUiElemnt(btnBackToMainMenu)
+
+            Game.mainMenu = PagedMenu(menu, menuLvl, back_bind = [btnBackToMainMenu], next_bind = [btn3])
 
         Game.initialized = True
 
     @staticmethod
+    def LevelChoosed_Action(**kwargs):
+        # TODO - level loader problem
+        sender = kwargs.get("sender", None)
+
+        if isinstance(sender, Button):
+            filePath = sender.additionalArgs.get("filePath")
+            if filePath is not None:
+                Game.currentLevel = LevelLoader.LevelLoader.LoadLevel(filePath, "Maps/" + filePath, Game.player)
+
+                Game.showMenu = False
+
+
+    @staticmethod
     def DrawObjects():
-        for tileMap in Game.map.sprites():
-            tileMap.blit()  # TODO - переделать на draw
+        Game.currentLevel.blit()
 
-        Game.player.blit()
-
-        Game.mainMenu.blit()
+        if Game.mainMenu != None and Game.showMenu:
+            Game.mainMenu.blit()
 
     @staticmethod
     def UpdateObjects():
-        for tileMap in Game.map.sprites():  # TODO - переделать на общий апдейт
-            tileMap.update()
+        Game.currentLevel.update()
 
-        Game.player.update()
+        if Game.mainMenu != None and Game.showMenu:
 
-        Game.mainMenu.update()
+            Game.mainMenu.update()
 
     @staticmethod
     def HandleEvents():
         for event in pygame.event.get():
             # проверка нажатия
-            if event.type == pygame.KEYDOWN:
-                Game.player.moving(event.key, True)
-            elif event.type == pygame.KEYUP:
-                Game.player.moving(event.key, False)
-            else:
+            if Game.currentLevel != None:
+                Game.currentLevel.handle_event(event)
+
+            if Game.mainMenu != None and Game.showMenu:
                 Game.mainMenu.HandleEvent(event)
 
             if Game.eventHandler is not None:

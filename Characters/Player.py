@@ -7,7 +7,6 @@ class Player(Sprite):
         super().__init__()
         self.__image = pygame.image.load(texture).convert_alpha()
         self.__screen = Config.get_Screen()
-        self.__map : pygame.sprite.Group = Config.get_Map()
 
         self.__speed = 2
 
@@ -55,21 +54,28 @@ class Player(Sprite):
             self.__isDown = key_down
 
     def ColliedWithHardTile(self):
-        for tileMap in self.__map.sprites():
-            group = tileMap.group
-            pg = Config.get_pygame()
-            result = pg.sprite.spritecollideany(self, group)
-            if result is not None:
-                print("Collided!")
+        map = Config.get_Map()
 
-            #for tileGroup in group.sprites():
-                #collision = pygame.sprite.spritecollideany(self, tileGroup)
-            #    collision = self.rect.colliderect(tileGroup.rect)
-            #    if collision:
-             #       print(collision)
-            # Может быть несколько спрайтов в коллизии, проверяем каждый
-            # нас интересуют только ХардТайлы
-            # если хоть один хард тайл есть, то возвращаем тру
+        if map is not None:
+            for tileMap in map.sprites():
+                group = tileMap.group
+                pg = Config.get_pygame()
+                result = pg.sprite.spritecollideany(self, group)
+
+                if result is not None:
+                    print("Collided!")
+                else:
+                    print("Not collided")
+
+
+                #for tileGroup in group.sprites():
+                    #collision = pygame.sprite.spritecollideany(self, tileGroup)
+                #    collision = self.rect.colliderect(tileGroup.rect)
+                #    if collision:
+                 #       print(collision)
+                # Может быть несколько спрайтов в коллизии, проверяем каждый
+                # нас интересуют только ХардТайлы
+                # если хоть один хард тайл есть, то возвращаем тру
 
 
         return False

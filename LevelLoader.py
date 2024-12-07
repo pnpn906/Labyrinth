@@ -1,4 +1,5 @@
 import pygame.sprite
+from os import listdir
 
 from Tiles.Tile import Tile
 from Tiles.TileMap import TileMap
@@ -6,6 +7,7 @@ from Tiles.HardTile import HardTile
 from Tiles.InteractiveTile import InteractiveTile
 from Tiles.MovableTile import MovableTile
 import json
+from Levels.Level import Level
 
 class LevelLoader:
     @staticmethod
@@ -39,9 +41,13 @@ class LevelLoader:
 
         return tileMap
 
+    @staticmethod
+    def GetListOfLevelMaps():
+        list = listdir("Maps")
+        return list
 
     @staticmethod
-    def LoadLevel(mapPath):
+    def LoadLevel(lvl, mapPath=None, player=None):
         """
         Подгруажет уровень.
 
@@ -63,6 +69,8 @@ class LevelLoader:
         :param mapPath: Путь к файлу json с уровнем.
         :return: Группу с Tilemap.
         """
+
+        result = Level(lvl, player = player)
         tileMaps = pygame.sprite.Group()
 
         if mapPath is not None:
@@ -72,7 +80,9 @@ class LevelLoader:
                 tileMap = LevelLoader.__deserializeMapSection(value)
                 tileMaps.add(tileMap)
 
-        return tileMaps
+            result.map = tileMaps
+
+        return result
 
 if __name__ == "__main__":
     print(Tile.__name__)
