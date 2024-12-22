@@ -1,11 +1,14 @@
 import pygame.image
 from Config import Config
 from pygame.sprite import Sprite
+from Tiles.HardTile import HardTile
 
 class Player(Sprite):
     def __init__(self, texture):
         super().__init__()
         self.__image = pygame.image.load(texture).convert_alpha()
+        self.__image = pygame.transform.scale(self.__image, (20,20))
+
         self.__screen = Config.get_Screen()
 
         self.__speed = 2
@@ -60,22 +63,12 @@ class Player(Sprite):
             for tileMap in map.sprites():
                 group = tileMap.group
                 pg = Config.get_pygame()
-                result = pg.sprite.spritecollideany(self, group)
+                #result = pg.sprite.spritecollideany(self, group)
 
-                if result is not None:
-                    print("Collided!")
-                else:
-                    print("Not collided")
-
-
-                #for tileGroup in group.sprites():
-                    #collision = pygame.sprite.spritecollideany(self, tileGroup)
-                #    collision = self.rect.colliderect(tileGroup.rect)
-                #    if collision:
-                 #       print(collision)
-                # Может быть несколько спрайтов в коллизии, проверяем каждый
-                # нас интересуют только ХардТайлы
-                # если хоть один хард тайл есть, то возвращаем тру
+                for tile in group.sprites():
+                    if isinstance(tile, HardTile):
+                        if self.rect.colliderect(tile.rect):
+                            return True
 
 
         return False

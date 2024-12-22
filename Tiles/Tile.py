@@ -37,6 +37,8 @@ class Tile(Sprite):
         newX = Tile.GetParam(x,  self.rect.left)
         newY = Tile.GetParam(y, self.rect.top)
         self.image = self.LoadImage(self.texture, newWidth, newHeight)
+        self.rect.width = newWidth
+        self.rect.height = newHeight
         self.Pos(newX, newY)
 
     @staticmethod

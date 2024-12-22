@@ -44,11 +44,9 @@ class Game:
             Game.eventHandler = kwargs[Game.CUSTOM_EVENT_HANDLER_ARG]
 
         if kwargs.keys().__contains__(Game.LEVEL_ARG) and kwargs[Game.LEVEL_ARG] is not None:
-            Game.currentLevel = kwargs[Game.LEVEL_ARG]
+            Game.__set_current_level(kwargs[Game.LEVEL_ARG])
         else:   
-            Game.currentLevel = Level(0)
-
-        Config.InternalSetTileMap(Game.currentLevel.map)
+            Game.__set_current_level(Level(0))
 
         Game.player = Player("images/traveler.png")
         Game.currentLevel.player = Game.player
@@ -110,10 +108,13 @@ class Game:
         if isinstance(sender, Button):
             filePath = sender.additionalArgs.get("filePath")
             if filePath is not None:
-                Game.currentLevel = LevelLoader.LevelLoader.LoadLevel(filePath, "Maps/" + filePath, Game.player)
-
+                Game.__set_current_level(LevelLoader.LevelLoader.LoadLevel(filePath, "Maps/" + filePath, Game.player))
                 Game.showMenu = False
 
+    @staticmethod
+    def __set_current_level(level : Level):
+        Game.currentLevel = level
+        Config.InternalSetTileMap(Game.currentLevel.map)
 
     @staticmethod
     def DrawObjects():
@@ -133,6 +134,12 @@ class Game:
     @staticmethod
     def HandleEvents():
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                if not Game.showMenu:
+                    Game.showMenu = True
+                elif Game.currentLevel != None and Game.currentLevel.map is not None:
+                    Game.showMenu = False
+
             # проверка нажатия
             if Game.currentLevel != None:
                 Game.currentLevel.handle_event(event)
