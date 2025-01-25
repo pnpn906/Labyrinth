@@ -22,9 +22,13 @@ class Game:
     player = None
     eventHandler = None
     customMenuHandler = None
-    mainMenu : PagedMenu = None
+    currentMenu : PagedMenu = None
+    inGameMenu: PagedMenu = None
+    mainMenu: PagedMenu = None
     levelsMenu = None
     currentLevel : Level = None
+
+
 
     @staticmethod
     def InitializePygame():
@@ -54,6 +58,20 @@ class Game:
         Game.showMenu = kwargs.get("showMenu", True)
 
         if Game.showMenu:
+
+            # Menu in level
+
+            inGameMenu = Menu("IN GAME MENU", Game.screen.get_width(), Game.screen.get_height(), (60, 60, 60), 0, 0, alignment="center")
+
+            btn1 = Button("вернуться в главное меню", 20, 470, 40, (243, 243, 223))
+            btn1.BindAction(Game.SubstitutionMenu)
+            btn2 = Button("продолжить игру", 20, 470, 40, (243, 243, 223))
+            btn2.BindAction(Game.GoToGameFromMenu)
+
+            inGameMenu.AddUiElemnt(btn1)
+            inGameMenu.AddUiElemnt(btn2)
+
+            Game.inGameMenu = PagedMenu(inGameMenu)
 
             # Main menu
 
@@ -96,7 +114,8 @@ class Game:
 
             menuLvl.AddUiElemnt(btnBackToMainMenu)
 
-            Game.mainMenu = PagedMenu(menu, menuLvl, back_bind = [btnBackToMainMenu], next_bind = [btn3])
+            Game.mainMenu =  PagedMenu(menu, menuLvl, back_bind = [btnBackToMainMenu], next_bind = [btn3])
+            Game.currentMenu =  Game.mainMenu
 
         Game.initialized = True
 
@@ -112,24 +131,38 @@ class Game:
                 Game.showMenu = False
 
     @staticmethod
+    def SubstitutionMenu(**kwargs):
+        Game.currentMenu = Game.mainMenu
+        Game.currentLevel = Level(0)
+
+    @staticmethod
+    def GoToGameFromMenu(**kwargs):
+        Game.showMenu = False
+
+    @staticmethod
     def __set_current_level(level : Level):
         Game.currentLevel = level
         Config.InternalSetTileMap(Game.currentLevel.map)
+
+        if Game.currentLevel != None and Game.currentLevel.map is not None:
+            Game.currentMenu = Game.inGameMenu
+            pass
 
     @staticmethod
     def DrawObjects():
         Game.currentLevel.blit()
 
-        if Game.mainMenu != None and Game.showMenu:
-            Game.mainMenu.blit()
+        if Game.currentMenu != None and Game.showMenu:
+            Game.currentMenu.blit()
 
     @staticmethod
     def UpdateObjects():
         Game.currentLevel.update()
 
-        if Game.mainMenu != None and Game.showMenu:
+        if Game.currentMenu != None and Game.showMenu:
 
-            Game.mainMenu.update()
+            Game.currentMenu.update()
+
 
     @staticmethod
     def HandleEvents():
@@ -144,8 +177,11 @@ class Game:
             if Game.currentLevel != None:
                 Game.currentLevel.handle_event(event)
 
-            if Game.mainMenu != None and Game.showMenu:
-                Game.mainMenu.HandleEvent(event)
+            if Game.currentMenu != None and Game.showMenu:
+                Game.currentMenu.HandleEvent(event)
+
+            if Game.currentLevel != None and Game.showMenu:
+                Game.currentMenu.HandleEvent(event)
 
             if Game.eventHandler is not None:
                 Game.eventHandler(event)
