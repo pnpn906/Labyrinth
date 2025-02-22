@@ -4,6 +4,7 @@ import LevelLoader
 from Config import Config
 from Tiles.TileMap import TileMap
 from pygame.sprite import Group
+from pygame.rect import Rect
 from Tiles.Tile import Tile
 from Characters.Player import Player
 from Tiles.HardTile import HardTile
@@ -11,6 +12,7 @@ from UiElements.Menu import Menu
 from UiElements.PagedMenu import PagedMenu
 from UiElements.Button import Button
 from Levels.Level import Level
+from camera import Camera
 
 class Game:
     LEVEL_ARG = "levelArg"
@@ -27,8 +29,7 @@ class Game:
     mainMenu: PagedMenu = None
     levelsMenu = None
     currentLevel : Level = None
-
-
+    camera : Camera = None
 
     @staticmethod
     def InitializePygame():
@@ -54,6 +55,12 @@ class Game:
 
         Game.player = Player("images/traveler.png")
         Game.currentLevel.player = Game.player
+
+        total_level_width = 50
+        total_level_height = 50
+        camera = Camera(Game.camera_configure, total_level_width, total_level_height)
+        Game.currentLevel.camera = camera
+        Game.camera = camera
 
         Game.showMenu = kwargs.get("showMenu", True)
 
@@ -142,11 +149,25 @@ class Game:
     @staticmethod
     def __set_current_level(level : Level):
         Game.currentLevel = level
+        Game.currentLevel.camera = Game.camera
         Config.InternalSetTileMap(Game.currentLevel.map)
 
         if Game.currentLevel != None and Game.currentLevel.map is not None:
             Game.currentMenu = Game.inGameMenu
             pass
+
+    @staticmethod
+    def camera_configure(camera, target_rect):
+        l, t, _, _ = target_rect
+        _, _, w, h = camera
+        l, t = -l + Game.screen.get_width() / 2, -t + Game.screen.get_height() / 2
+
+        l = min(0, l)  # Не выходим за левую границу
+        l = max(-(camera.width - Game.screen.get_width()), l)  # Не выходим за правую границу
+        t = max(-(camera.height - Game.screen.get_height()), t)  # Не выходим за нижнюю границу
+        t = min(0, t)  # Не выходим за верхнюю границу
+
+        return Rect(l, t, w, h)
 
     @staticmethod
     def DrawObjects():
@@ -160,7 +181,6 @@ class Game:
         Game.currentLevel.update()
 
         if Game.currentMenu != None and Game.showMenu:
-
             Game.currentMenu.update()
 
 

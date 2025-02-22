@@ -6,6 +6,7 @@ class Level(Sprite):
         self.player = player
         self.map = map
         self.lvl = lvl
+        self.camera = None
 
     def handle_event(self, event):
         if self.player is not None:
@@ -21,10 +22,16 @@ class Level(Sprite):
         if self.player is not None:
             self.player.update()
 
+            if self.camera is not None:
+                self.camera.update(self.player)
+
+    def camera_apply(self, obj):
+        return self.camera.apply(obj)
+
     def blit(self):
         if self.map is not None:
             for tileMap in self.map.sprites():
-                tileMap.blit()  # TODO - переделать на draw
+                tileMap.blit(self.camera_apply)  # TODO - переделать на draw
 
         if self.player is not None:
             self.player.blit()

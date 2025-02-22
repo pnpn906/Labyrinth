@@ -25,8 +25,13 @@ class Tile(Sprite):
         self.rect.left = x
         self.rect.top = y
 
-    def Blitme(self):
-       Config.get_Screen().blit(self.image,self.rect)
+    def blit(self, func=None):
+        f = self.rect
+        if func is not None:
+            f = func(self)
+
+
+        Config.get_Screen().blit(self.image, f)
 
     def update(self):
         pass

@@ -28,8 +28,11 @@ class TileMap(Sprite):
     def GetGroup(self):
         return self.group
 
-    def blit(self):
+    def blit(self, applyFunc=None):
         self.group.draw(Config.get_Screen())
+
+        for tile in self.group.sprites():
+            tile.blit(applyFunc)
 
     def update(self):
         self.group.update()
