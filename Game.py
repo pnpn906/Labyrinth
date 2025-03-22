@@ -59,7 +59,7 @@ class Game:
         Game.currentLevel.player = Game.player
 
         # Создаем тестового врага
-        enemy = Enemy("images/spider.png", 400, 300)
+        enemy = Enemy("images/spider.png", 283, 200)
         Game.enemies.add(enemy)
 
         total_level_width = 50
@@ -207,7 +207,7 @@ class Game:
             if Game.currentMenu != None and Game.showMenu:
                 Game.currentMenu.HandleEvent(event)
 
-            if Game.currentLevel != None and Game.showMenu:
+            if Game.currentLevel != None and Game.showMenu and Game.currentMenu is not None:
                 Game.currentMenu.HandleEvent(event)
 
             if Game.eventHandler is not None:
