@@ -7,6 +7,7 @@ from pygame.sprite import Group
 from pygame.rect import Rect
 from Tiles.Tile import Tile
 from Characters.Player import Player
+from Characters.Enemy import Enemy
 from Tiles.HardTile import HardTile
 from UiElements.Menu import Menu
 from UiElements.PagedMenu import PagedMenu
@@ -30,6 +31,7 @@ class Game:
     levelsMenu = None
     currentLevel : Level = None
     camera : Camera = None
+    enemies : Group = Group()
 
     @staticmethod
     def InitializePygame():
@@ -55,6 +57,10 @@ class Game:
 
         Game.player = Player("images/traveler.png")
         Game.currentLevel.player = Game.player
+
+        # Создаем тестового врага
+        enemy = Enemy("images/spider.png", 400, 300)
+        Game.enemies.add(enemy)
 
         total_level_width = 50
         total_level_height = 50
@@ -134,7 +140,7 @@ class Game:
         if isinstance(sender, Button):
             filePath = sender.additionalArgs.get("filePath")
             if filePath is not None:
-                Game.__set_current_level(LevelLoader.LevelLoader.LoadLevel(filePath, "Maps/" + filePath, Game.player))
+                Game.__set_current_level(LevelLoader.LevelLoader.LoadLevel(filePath, "Maps/" + filePath, Game.player, Game.enemies))
                 Game.showMenu = False
 
     @staticmethod
@@ -171,18 +177,19 @@ class Game:
 
     @staticmethod
     def DrawObjects():
-        Game.currentLevel.blit()
+        if Game.currentLevel is not None:
+            Game.currentLevel.blit()
 
         if Game.currentMenu != None and Game.showMenu:
             Game.currentMenu.blit()
 
     @staticmethod
     def UpdateObjects():
-        Game.currentLevel.update()
+        if Game.currentLevel is not None:
+            Game.currentLevel.update()
 
         if Game.currentMenu != None and Game.showMenu:
             Game.currentMenu.update()
-
 
     @staticmethod
     def HandleEvents():

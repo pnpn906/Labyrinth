@@ -19,11 +19,16 @@ class Player(Sprite):
         self.__isDown = False
 
         self.rect = self.__image.get_rect()
+        self.is_alive = True
 
     def blit(self):
-        self.__screen.blit(self.__image, self.rect)
+        if self.is_alive:
+            self.__screen.blit(self.__image, self.rect)
 
     def update(self, *args, **kwargs):
+        if not self.is_alive:
+            return
+
         if self.__isUp:
             self.rect.y -= self.__speed
         if self.__isDown:
@@ -45,8 +50,13 @@ class Player(Sprite):
             if self.__isLeft:
                 self.rect.x += self.__speed
 
+        if self.ColliedWithEnemy():
+            self.is_alive = False
 
     def moving(self, key, key_down=True):
+        if not self.is_alive:
+            return
+            
         if key == pygame.K_a:
             self.__isLeft = key_down
         elif key == pygame.K_d:
@@ -63,14 +73,19 @@ class Player(Sprite):
             for tileMap in map.sprites():
                 group = tileMap.group
                 pg = Config.get_pygame()
-                #result = pg.sprite.spritecollideany(self, group)
 
                 for tile in group.sprites():
                     if isinstance(tile, HardTile):
                         if self.rect.colliderect(tile.rect):
                             return True
 
+        return False
 
+    def ColliedWithEnemy(self):
+        from Game import Game
+        for enemy in Game.enemies:
+            if self.rect.colliderect(enemy.rect):
+                return True
         return False
 
 if __name__ == "__main__":

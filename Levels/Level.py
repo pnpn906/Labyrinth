@@ -1,5 +1,6 @@
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, Group
 import pygame
+
 class Level(Sprite):
     def __init__(self,lvl, player=None, map=None):
         super().__init__()
@@ -7,6 +8,10 @@ class Level(Sprite):
         self.map = map
         self.lvl = lvl
         self.camera = None
+        self.enemies = Group()
+
+    def add_enemy(self, enemy):
+        self.enemies.add(enemy)
 
     def handle_event(self, event):
         if self.player is not None:
@@ -24,6 +29,9 @@ class Level(Sprite):
 
             if self.camera is not None:
                 self.camera.update(self.player)
+        
+        for enemy in self.enemies:
+            enemy.update()
 
     def camera_apply(self, obj):
         return self.camera.apply(obj)
@@ -35,3 +43,6 @@ class Level(Sprite):
 
         if self.player is not None:
             self.player.blit()
+            
+        for enemy in self.enemies:
+            enemy.blit()

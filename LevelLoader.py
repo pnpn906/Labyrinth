@@ -47,7 +47,7 @@ class LevelLoader:
         return list
 
     @staticmethod
-    def LoadLevel(lvl, mapPath=None, player=None):
+    def LoadLevel(lvl, mapPath=None, player=None, en=None):
         """
         Подгруажет уровень.
 
@@ -71,6 +71,10 @@ class LevelLoader:
         """
 
         result = Level(lvl, player = player)
+
+        if en is not None:
+            result.enemies = en
+
         tileMaps = pygame.sprite.Group()
 
         if mapPath is not None:
