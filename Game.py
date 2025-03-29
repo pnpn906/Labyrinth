@@ -57,6 +57,7 @@ class Game:
 
         Game.player = Player("images/traveler.png")
         Game.currentLevel.player = Game.player
+        Config.InternalSetPlayer(Game.player)
 
         # Создаем тестового врага
         enemy = Enemy("images/spider.png", 283, 200)

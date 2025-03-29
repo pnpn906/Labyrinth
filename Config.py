@@ -2,15 +2,13 @@ class Config:
     __screen = None
     __map = None
     __puzzletilemap = None
-
     __pygame = None
-
     __isInitialized = False
+    __player = None
 
     @staticmethod
     def Initialize(screen):
         Config.__screen = screen
-
         Config.__isInitialized = Config.CheckAllProps()
 
     @staticmethod
@@ -28,6 +26,14 @@ class Config:
     @staticmethod
     def InternalSetPuzzleTileMap(puzzletilemap):
         Config.__puzzletilemap = puzzletilemap
+
+    @staticmethod
+    def InternalSetPlayer(player):
+        Config.__player = player
+
+    @staticmethod
+    def get_Player():
+        return Config.__player
 
     @staticmethod
     def ValidateInitialize():
